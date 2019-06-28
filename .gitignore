@@ -1,3 +1,9 @@
+.vs
+Debug/
+opencv2/
+x64/
+mydll_motion_detector.vcxproj.user
+
 # Prerequisites
 *.d
 
