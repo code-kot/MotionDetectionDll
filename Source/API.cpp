@@ -74,10 +74,10 @@ void remove_detector_instance(motion_detector* md)
 }
 
 // create instance and return pointer to instance
-MOTION_DETECTION_API h_instance create_instance(const callback callback/* settings ?? */)
+MOTION_DETECTION_API h_instance create_instance(const callback callback, const unsigned int frame_width, const unsigned int frame_height/* settings ?? */)
 {
 	// create new instance
-	auto md = new motion_detector(callback/* settings ?? */);
+	auto md = new motion_detector(callback, frame_width,  frame_height/* settings ?? */);
 
 	// add to instances list	
 	add_detector_instance(md);
@@ -87,7 +87,7 @@ MOTION_DETECTION_API h_instance create_instance(const callback callback/* settin
 }
 
 // add new frame
-MOTION_DETECTION_API void add_frame(const h_instance instance /* frame ?? */)
+MOTION_DETECTION_API void add_frame(const h_instance instance, void* pixels, unsigned int bytes_per_line /* frame ?? */)
 {
 	auto md = reinterpret_cast<motion_detector*>(instance);
 

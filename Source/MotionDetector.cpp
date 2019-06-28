@@ -2,10 +2,11 @@
 #include "MotionDetector.h"
 #include "Exceptions.h"
 
-
-motion_detector::motion_detector(callback callback /* more settings ?? */)
+motion_detector::motion_detector(const callback callback, const unsigned int frame_width, const unsigned int frame_height /* more settings ?? */)
 {
 	callback_ = callback;
+	frame_width_ = frame_width;
+	frame_height_ = frame_height;
 
 	// create objects
 
