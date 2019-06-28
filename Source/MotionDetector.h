@@ -1,8 +1,5 @@
 #pragma once
-#include "Exceptions.h"
-
-typedef unsigned long long H_instance;
-typedef void (*callback)(int left, int top /* more params ?? */);
+#include "API.h"
 
 class motion_detector
 {

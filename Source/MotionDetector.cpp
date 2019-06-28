@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "MotionDetector.h"
+#include "Exceptions.h"
 
 
 motion_detector::motion_detector(callback callback /* more settings ?? */)

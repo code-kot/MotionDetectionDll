@@ -1,6 +1,6 @@
 #include "pch.h"
-#include "API.h"
 #include <vector>
+#include "MotionDetector.h"
 
 std::vector<motion_detector*> g_detectors;
 CRITICAL_SECTION g_csDetectorsLock;
@@ -74,7 +74,7 @@ void remove_detector_instance(motion_detector* md)
 }
 
 // create instance and return pointer to instance
-MOTION_DETECTION_API H_instance create_instance(const callback callback/* settings ?? */)
+MOTION_DETECTION_API h_instance create_instance(const callback callback/* settings ?? */)
 {
 	// create new instance
 	auto md = new motion_detector(callback/* settings ?? */);
@@ -83,11 +83,11 @@ MOTION_DETECTION_API H_instance create_instance(const callback callback/* settin
 	add_detector_instance(md);
 	
 	// return handle
-	return reinterpret_cast<H_instance>(md);
+	return reinterpret_cast<h_instance>(md);
 }
 
 // add new frame
-MOTION_DETECTION_API void add_frame(const H_instance instance /* frame ?? */)
+MOTION_DETECTION_API void add_frame(const h_instance instance /* frame ?? */)
 {
 	auto md = reinterpret_cast<motion_detector*>(instance);
 
@@ -99,7 +99,7 @@ MOTION_DETECTION_API void add_frame(const H_instance instance /* frame ?? */)
     md->add_frame(/* frame ?? */);
 }
 
-MOTION_DETECTION_API void reset_instance(const H_instance instance)
+MOTION_DETECTION_API void reset_instance(const h_instance instance)
 {
 	auto md = reinterpret_cast<motion_detector*>(instance);
 
@@ -111,7 +111,7 @@ MOTION_DETECTION_API void reset_instance(const H_instance instance)
 	md->reset();
 }
 
-MOTION_DETECTION_API void delete_instance(const H_instance instance)
+MOTION_DETECTION_API void delete_instance(const h_instance instance)
 {
 	const auto md = reinterpret_cast<motion_detector*>(instance);
 
