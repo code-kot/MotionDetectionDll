@@ -1,8 +1,7 @@
 #include "pch.h"
 #include "API.h"
+#include <vector>
 #include "_motion_detector.h"
-
-
 
 using namespace std;
 using namespace chrono;
@@ -10,14 +9,14 @@ using namespace cv;
 
 std::vector<motion_detector*> g_detectors;
 CRITICAL_SECTION g_csDetectorsLock;
-bool b_isDetectorsLockInitialized = false;
+bool b_is_detectors_lock_initialized = false;
 
 class lock
 {
 	CRITICAL_SECTION& cs_;
 
 public:
-	lock(CRITICAL_SECTION& cs)
+	explicit lock(CRITICAL_SECTION& cs)
 		: cs_(cs)
 	{
 		EnterCriticalSection(&cs_);
@@ -28,31 +27,31 @@ public:
 	}
 };
 
-void AddDetectorInstance(motion_detector* MD)
+void add_detector_instance(motion_detector* md)
 {
-	if (!b_isDetectorsLockInitialized)
+	if (!b_is_detectors_lock_initialized)
 	{
-		b_isDetectorsLockInitialized = true;
+		b_is_detectors_lock_initialized = true;
 		InitializeCriticalSection(&g_csDetectorsLock);
 	}
 
-	//lock cs_lock(g_csDetectorsLock);
+	lock cs_lock(g_csDetectorsLock);
 
-	g_detectors.push_back(MD);
+	g_detectors.push_back(md);
 }
 
-int GetDetectorInstanceIndex(motion_detector* MD)
+int get_detector_instance_index(motion_detector* md)
 {
-	int n = -1;
+	auto n = -1;
 
-	if (!b_isDetectorsLockInitialized)
+	if (!b_is_detectors_lock_initialized)
 		return n;
 
-	//lock cs_lock(g_csDetectorsLock);
+	lock cs_lock(g_csDetectorsLock);
 
-	for (int i = 0; i < g_detectors.size(); i++)
+	for (auto i = 0; i < g_detectors.size(); i++)
 	{
-		if (g_detectors[i] == MD)
+		if (g_detectors[i] == md)
 		{
 			n = i;
 			break;
@@ -62,17 +61,18 @@ int GetDetectorInstanceIndex(motion_detector* MD)
 	return n;
 }
 
-bool IsDetectorInstanceExists(motion_detector* MD)
+bool is_detector_instance_exists(motion_detector* md)
 {
-	return GetDetectorInstanceIndex(MD) >= 0;
+	return get_detector_instance_index(md) >= 0;
 }
 
-void RemoveDetectorInstance(motion_detector* MD)
+void remove_detector_instance(motion_detector* md)
 {
-	//lock cs_lock(g_csDetectorsLock);
+	lock cs_lock(g_csDetectorsLock);
 
-	int n = GetDetectorInstanceIndex(MD);
-
+	const auto n = get_detector_instance_index(md);
+	auto reset();//reset
+	void init();
 	if (n >= 0) {
 		delete g_detectors[n];
 		g_detectors.erase(g_detectors.begin() + n);
@@ -80,53 +80,46 @@ void RemoveDetectorInstance(motion_detector* MD)
 }
 
 // create instance and return pointer to instance
-MOTION_DETECTION_API H_instance create(Callback callback/* settings ?? */)
+MOTION_DETECTION_API h_instance create_instance(const callback callback/* settings ?? */)
 {
 	// create new instance
-	motion_detector* MD = new motion_detector(callback/* settings ?? */);
-
+	auto md = new motion_detector(callback/* settings ?? */);
 	// add to instances list	
-	AddDetectorInstance(MD);
-
+	add_detector_instance(md);
 	// return handle
-	return (H_instance)MD;
+	void init();
+	return reinterpret_cast<h_instance>(md);
 }
 
 // add new frame
-MOTION_DETECTION_API void add_frame(H_instance instance /* frame ?? */)
+MOTION_DETECTION_API void add_frame(h_instance instance, void* pixels, unsigned int bytes_per_line)
 {
-	motion_detector* MD = (motion_detector*)instance;
+	auto md = reinterpret_cast<motion_detector*>(instance);
 
 	// check instance exists
-	if (!IsDetectorInstanceExists(MD))
+	if (!is_detector_instance_exists(md))
 		return;	// throw exception?
-
 	// add new frame
-	MD->add_frame(/* frame ?? */);
-
-	return;
+	auto add_frame(Mat * input_data);
+	md->add_frame(Mat * input_data);
 }
 
-MOTION_DETECTION_API void reset(H_instance instance)
+MOTION_DETECTION_API void reset_instance(const h_instance instance)
 {
-	motion_detector* MD = (motion_detector*)instance;
+	auto md = reinterpret_cast<motion_detector*>(instance);
 
 	// check instance exists
-	if (!IsDetectorInstanceExists(MD))
+	if (!is_detector_instance_exists(md))
 		return;	// throw exception?
 
 	// reset state
-	MD->reset();
-
-	return;
+	md->reset();
 }
 
-MOTION_DETECTION_API void delete(H_instance instance)
+MOTION_DETECTION_API void delete_instance(const h_instance instance)
 {
-	motion_detector* MD = (motion_detector*)instance;
+	const auto md = reinterpret_cast<motion_detector*>(instance);
 
 	// delete instance
-	RemoveDetectorInstance(MD);
-
-	return;
+	remove_detector_instance(md);
 }

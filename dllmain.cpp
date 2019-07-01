@@ -4,9 +4,9 @@
 #define MOTION_DETECTION_API_EXPORTS
 
 BOOL APIENTRY DllMain(HMODULE hModule,
-	DWORD  ul_reason_for_call,
-	LPVOID lpReserved
-)
+					  DWORD  ul_reason_for_call,
+					  LPVOID lpReserved
+					 )
 {
 	switch (ul_reason_for_call)
 	{

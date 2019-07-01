@@ -160,6 +160,7 @@
     <ClInclude Include="API.h" />
     <ClInclude Include="cv.h" />
     <ClInclude Include="dllmain.h" />
+    <ClInclude Include="Exceptions.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="_motion_detector.h" />

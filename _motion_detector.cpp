@@ -1,5 +1,7 @@
-#include <stdexcept>
+#include "stdexcept"
 #include "_motion_detector.h"
+#include "Exceptions.h"
+#include "pch.h"
 #include "time_counter.h"
 #include "cv.h"
 
@@ -7,8 +9,53 @@ using namespace std;
 using namespace chrono;
 using namespace cv;
 
-void motion_detector::bh_draw_color_label(Mat& src, const string& title, const Scalar& color, const int pos,
-                                          const int size)
+auto k = 0;
+
+void motion_detector::init()
+{
+	time_counter t; //create object T
+	motion_detector m;
+	back_sub = createBackgroundSubtractorMOG2(200, 90, true);
+}
+
+auto motion_detector::reset()
+{
+	src1.clear();
+	src1_resized.release();
+	mask.release();
+	background.release();
+	destroyAllWindows();
+}
+
+auto motion_detector::deinit()
+{
+	src1_resized.release();
+	mask.release();
+	background.release();
+}
+
+auto motion_detector::_detector(callback callback /* more settings ?? */)
+{
+	_callback = callback;
+	if (k > 19)
+	{
+		void refine_segments();
+	}
+}
+
+auto motion_detector::add_frame(Mat* input_data) 
+{
+	k++;
+	
+	auto& src1 = *input_data;
+	resize(src1, src1_resized, Size(src1.cols / coef, src1.rows / coef));
+	back_sub->apply(src1_resized, mask);
+	back_sub->getBackgroundImage(background);
+
+	(*_callback)(42, 42);
+}
+
+void motion_detector::bh_draw_color_label(Mat& src, const string& title, const Scalar& color, const int pos, const int size)
 {
 	const auto line_size = 30; //30
 	const Point_<int> offset(10, 10);
