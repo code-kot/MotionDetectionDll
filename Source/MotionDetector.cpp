@@ -2,7 +2,7 @@
 #include "MotionDetector.h"
 #include "Exceptions.h"
 
-motion_detector::motion_detector(const callback callback, const unsigned int frame_width, const unsigned int frame_height /* more settings ?? */)
+motion_detector::motion_detector(callback* callback, const unsigned int frame_width, const unsigned int frame_height /* more settings ?? */)
 {
 	callback_ = callback;
 	frame_width_ = frame_width;
@@ -31,7 +31,7 @@ void motion_detector::add_frame(/* frame ?? */)
 	// do stuffs with frame
 
 	// if motion detected use callback to post results
-	(*callback_)(42, 42);
+	(callback_)(42, 42);
 }
 
 void motion_detector::reset()
