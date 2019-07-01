@@ -45,7 +45,7 @@ public:
 
 	void deinit();
 
-	motion_detector();
+	//motion_detector();
 
 	~motion_detector();	
 };

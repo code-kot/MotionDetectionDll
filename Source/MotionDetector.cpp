@@ -12,7 +12,7 @@ using namespace cv;
 
 auto k = 0;
 
-motion_detector m;
+//motion_detector m;
 
 void motion_detector::deinit()
 {
@@ -100,9 +100,9 @@ void motion_detector::show_images(Mat& img, Mat& mask)
 	imshow(display_window, view_mat);
 }
 
-motion_detector::motion_detector(callback* callback, const unsigned int frame_width, const unsigned int frame_height /* more settings ?? */)
+motion_detector::motion_detector(callback* callback, const unsigned int frame_width, const unsigned int frame_height )/* more settings ?? */
 {
-	back_sub = new Ptr<BackgroundSubtractor>();
+	Ptr<BackgroundSubtractor>();
 	callback_ = callback;
 	frame_width_ = frame_width;
 	frame_height_ = frame_height;
