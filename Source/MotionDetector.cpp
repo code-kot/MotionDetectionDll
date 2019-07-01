@@ -3,7 +3,7 @@
 #include "Exceptions.h"
 #include <vector>
 
-motion_detector::motion_detector(callback* callback, const unsigned int frame_width, const unsigned int frame_height /* more settings ?? */)
+motion_detector::motion_detector(callback* callback, const int frame_width, const int frame_height /* more settings ?? */)
 {
 	callback_ = callback;
 	frame_width_ = frame_width;

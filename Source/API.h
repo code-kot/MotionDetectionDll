@@ -8,14 +8,14 @@
 #endif
 
 typedef void h_instance;
-typedef void (__cdecl callback)(int rects_count, RECT* rects, void* background_pixels, unsigned int bytes_per_line);
+typedef void (__cdecl callback)(int rects_count, RECT* rects, void* background_pixels, int bytes_per_line);
 
 extern "C" {
 	/// create and init instance
-	MOTION_DETECTION_API h_instance* create_motion_detector(callback* callback, unsigned int frame_width, unsigned int frame_height/* settings ?? */);
+	MOTION_DETECTION_API h_instance* create_motion_detector(callback* callback, int frame_width, int frame_height/* settings ?? */);
 
 	/// process next frame
-	MOTION_DETECTION_API void process_frame(h_instance* instance, void* pixels, unsigned int bytes_per_line /* frame ?? */);
+	MOTION_DETECTION_API void process_frame(h_instance* instance, void* pixels, int bytes_per_line /* frame ?? */);
 
 	/// reset detector
 	MOTION_DETECTION_API void reset_motion_detector( h_instance* instance);
