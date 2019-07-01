@@ -25,10 +25,12 @@ class motion_detector
 	void show_images(Mat& img, Mat& mask);
 
 	callback* callback_;
-	unsigned int frame_width_;
-	unsigned int frame_height_;
+	
 
 public:
+
+	unsigned int frame_width_;
+	unsigned int frame_height_;
 	explicit motion_detector(callback* callback, unsigned int frame_width, unsigned int frame_height /* settings */);
 
 	Mat view_mat; Mat temp; Mat mask, background, src1_resized;
@@ -43,20 +45,9 @@ public:
 
 	auto deinit();
 
-	auto motion_detector();
+	motion_detector();
 
-	~motion_detector();
-
-	auto init();
-
-	auto add_frame(Mat* input_data); // frame ?? 
-
-	auto reset();
-
-	auto deinit();
-	
-	auto motion_detector();
-	
+	~motion_detector();	
 };
 
 

@@ -1,8 +1,10 @@
 #include "pch.h"
+//#include "stdafx.h"
 #include "MotionDetector.h"
 #include "Exceptions.h"
 #include "time_counter.h"
 #include "cv.h"
+
 
 using namespace std;
 using namespace chrono;
@@ -100,12 +102,18 @@ void motion_detector::show_images(Mat& img, Mat& mask)
 
 motion_detector::motion_detector(callback* callback, const unsigned int frame_width, const unsigned int frame_height /* more settings ?? */)
 {
+	back_sub = new Ptr<BackgroundSubtractor>();
 	callback_ = callback;
 	frame_width_ = frame_width;
 	frame_height_ = frame_height;
-
-	// create objects
 	
+	// create objects
+		Mat src1_resized;
+		resize(src1, src1_resized, Size(frame_width_/coef, frame_height_ /coef));
+		Mat mask = src1_resized;
+		back_sub->apply(src1_resized, mask);
+		back_sub->getBackgroundImage(background);
+		void bh_draw_color_label();
 		if (k > 19)
 		{
 			void refine_segments();
@@ -117,9 +125,11 @@ motion_detector::motion_detector(callback* callback, const unsigned int frame_wi
 
 motion_detector::~motion_detector()
 {
+		back_sub.release(); 
 		src1_resized.release();
 		mask.release();
 		background.release();// delete used objects and free memory
+		destroyAllWindows();
 }
 
 auto motion_detector::init()
