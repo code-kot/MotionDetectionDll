@@ -108,11 +108,14 @@
       <PreprocessorDefinitions>_DEBUG;MOTION_DETECTION_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>D:\opencv\build\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <AdditionalLibraryDirectories>D:\opencv\build\x64\vc15\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_world410d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -157,14 +160,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="API.h" />
+    <ClInclude Include="cv.h" />
     <ClInclude Include="Exceptions.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MotionDetector.h" />
+    <ClInclude Include="time_counter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="API.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="MotionDetector.cpp" />
+    <ClCompile Include="time_counter.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
