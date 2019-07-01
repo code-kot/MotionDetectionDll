@@ -8,7 +8,7 @@
 #endif
 
 typedef void h_instance;
-typedef void (__cdecl callback)(int left, int top /* more params ?? */);
+typedef void (__cdecl callback)(int rects_count, RECT* rects, void* background_pixels, unsigned int bytes_per_line);
 
 extern "C" {
 	/// create and init instance
