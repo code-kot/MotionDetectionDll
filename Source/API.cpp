@@ -6,7 +6,7 @@
 MOTION_DETECTION_API h_instance* create_motion_detector(callback* callback, const unsigned int frame_width, const unsigned int frame_height/* settings ?? */)
 {
 	// create new instance
-	const auto md = new motion_detector(callback, frame_width,  frame_height/* settings ?? */);
+	auto md = new motion_detector(callback, frame_width,  frame_height/* settings ?? */);
 
 	// return handle
 	return md; //reinterpret_cast<h_instance*>(md);
@@ -15,11 +15,11 @@ MOTION_DETECTION_API h_instance* create_motion_detector(callback* callback, cons
 // add new frame
 MOTION_DETECTION_API void process_frame(h_instance* instance, void* pixels, unsigned int bytes_per_line /* frame ?? */)
 {
-	
 	auto md = reinterpret_cast<motion_detector*>(instance);
-	Mat src_new = Mat(md->frame_height_, md->frame_width_,CV_8UC3, pixels, bytes_per_line);
+	auto src_new = Mat (md->frame_height_, md->frame_width_,CV_8UC3, pixels, bytes_per_line);
 	// add new frame
-	md->add_frame(&src_new);
+	md->add_frame_(&src_new);
+	//auto& src1 = src_new;
 	callback(view_Mat);
 }
 

@@ -14,7 +14,7 @@ auto k = 0;
 
 motion_detector m;
 
-auto motion_detector::deinit()
+void motion_detector::deinit()
 {
 	src1_resized.release();
 	mask.release();
@@ -132,7 +132,7 @@ motion_detector::~motion_detector()
 		destroyAllWindows();
 }
 
-auto motion_detector::init()
+void motion_detector::init()
 {
 		time_counter t; //create object T
 		
@@ -140,7 +140,7 @@ auto motion_detector::init()
 	   // init objects here
 }
 
-auto motion_detector::add_frame(Mat* input_data)
+void motion_detector::add_frame_(Mat* input_data)
 {
 		k++;
 		auto& src1 = *input_data;
@@ -150,7 +150,7 @@ auto motion_detector::add_frame(Mat* input_data)
 		(callback_)(42, 42);
 }
 
-auto motion_detector::reset()
+void motion_detector::reset()
 {
 		src1.clear();
 		src1_resized.release();

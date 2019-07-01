@@ -37,13 +37,13 @@ public:
 	Mat* input_data;
 	vector<Mat> src1;
 	
-	auto init();
+	void init();
 
-	auto add_frame(Mat* input_data);
+	void add_frame_(Mat* input_data);
 
-	auto reset();
+	void reset();
 
-	auto deinit();
+	void deinit();
 
 	motion_detector();
 
