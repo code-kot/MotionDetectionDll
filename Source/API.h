@@ -7,17 +7,17 @@
 #define MOTION_DETECTION_API __declspec(dllimport)
 #endif
 
-typedef unsigned long long h_instance;
-typedef void (*callback)(int left, int top /* more params ?? */);
+typedef unsigned long long H_instance;
+typedef void (*Callback)(int left, int top /* more params ?? */);
 
 // create and init instance
-extern "C" MOTION_DETECTION_API h_instance create_instance(callback callback, unsigned long frame_width, unsigned long frame_height/* settings ?? */);
+extern "C" MOTION_DETECTION_API H_instance create_instance(Callback callback/* settings ?? */);
 
 // add new frame
-extern "C" MOTION_DETECTION_API void add_frame(h_instance instance, void* pixels, unsigned int bytes_per_line /* frame ?? */);
+extern "C" MOTION_DETECTION_API void add_frame(H_instance instance /* frame ?? */);
 
 // reset
-extern "C" MOTION_DETECTION_API void reset_instance(h_instance instance);
+extern "C" MOTION_DETECTION_API void reset_instance(H_instance instance);
 
 // delete
-extern "C" MOTION_DETECTION_API void delete_instance(h_instance instance);
+extern "C" MOTION_DETECTION_API void delete_instance(H_instance instance);

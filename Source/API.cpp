@@ -1,6 +1,11 @@
 #include "pch.h"
+#include "API.h"
 #include <vector>
-#include "MotionDetector.h"
+#include "_motion_detector.h"
+
+using namespace std;
+using namespace chrono;
+using namespace cv;
 
 std::vector<motion_detector*> g_detectors;
 CRITICAL_SECTION g_csDetectorsLock;
@@ -22,7 +27,7 @@ public:
 	}
 };
 
-void add_detector_instance(motion_detector* md) 
+void add_detector_instance(motion_detector* md)
 {
 	if (!b_is_detectors_lock_initialized)
 	{
@@ -31,7 +36,7 @@ void add_detector_instance(motion_detector* md)
 	}
 
 	lock cs_lock(g_csDetectorsLock);
-	
+
 	g_detectors.push_back(md);
 }
 
@@ -66,7 +71,8 @@ void remove_detector_instance(motion_detector* md)
 	lock cs_lock(g_csDetectorsLock);
 
 	const auto n = get_detector_instance_index(md);
-
+	auto reset();//reset
+	void init();
 	if (n >= 0) {
 		delete g_detectors[n];
 		g_detectors.erase(g_detectors.begin() + n);
@@ -74,29 +80,28 @@ void remove_detector_instance(motion_detector* md)
 }
 
 // create instance and return pointer to instance
-MOTION_DETECTION_API h_instance create_instance(const callback callback, const unsigned int frame_width, const unsigned int frame_height/* settings ?? */)
+MOTION_DETECTION_API h_instance create_instance(const callback callback/* settings ?? */)
 {
 	// create new instance
-	auto md = new motion_detector(callback, frame_width,  frame_height/* settings ?? */);
-
+	auto md = new motion_detector(callback/* settings ?? */);
 	// add to instances list	
 	add_detector_instance(md);
-	
 	// return handle
+	void init();
 	return reinterpret_cast<h_instance>(md);
 }
 
 // add new frame
-MOTION_DETECTION_API void add_frame(const h_instance instance, void* pixels, unsigned int bytes_per_line /* frame ?? */)
+MOTION_DETECTION_API void add_frame(h_instance instance, void* pixels, unsigned int bytes_per_line)
 {
 	auto md = reinterpret_cast<motion_detector*>(instance);
 
 	// check instance exists
 	if (!is_detector_instance_exists(md))
 		return;	// throw exception?
-
 	// add new frame
-    md->add_frame(/* frame ?? */);
+	auto add_frame(Mat * input_data);
+	md->add_frame(Mat * input_data);
 }
 
 MOTION_DETECTION_API void reset_instance(const h_instance instance)
