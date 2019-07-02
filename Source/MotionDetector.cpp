@@ -9,10 +9,6 @@ using namespace std;
 using namespace chrono;
 using namespace cv;
 
-auto k = 0;
-
-//motion_detector m;
-
 void motion_detector::deinit()
 {
 	src1_resized.release();
@@ -85,7 +81,7 @@ void motion_detector::refine_segments(const Mat& img, Mat& mask, Mat& dst, time_
 		//Mat grayscalie_mat(img.size(), CV_8UC1);
 	}
 	bh_draw_color_label(view_mat, "Motion Detector", CV_8UC1, (1, 0));
-	namedWindow(display_window, WINDOW_AUTOSIZE);
+	namedWindow(display_window_, WINDOW_AUTOSIZE);
 }
 
 void motion_detector::show_images(Mat& img, Mat& mask)
@@ -102,21 +98,10 @@ void motion_detector::show_images(Mat& img, Mat& mask)
 motion_detector::motion_detector(callback* callback, const int frame_width, const int frame_height )
 {
 	callback_ = callback;
-	frame_width_ = frame_width;
-	frame_height_ = frame_height;
+	frame_width = frame_width;
+	frame_height = frame_height;
 
 	// create objects
-	Mat src1_resized;
-	resize(src1, src1_resized, Size(frame_width_/coef, frame_height_ /coef));
-	Mat mask = src1_resized;
-	back_sub->apply(src1_resized, mask);
-	back_sub->getBackgroundImage(background);
-
-	void bh_draw_color_label();
-	if (k > 19)
-	{
-		void refine_segments();
-	}
 
 	// init
 	init(); // ?
@@ -125,7 +110,7 @@ motion_detector::motion_detector(callback* callback, const int frame_width, cons
 motion_detector::~motion_detector()
 {
 	// delete used objects and free memory
-	back_sub.release(); 
+	back_sub_.release(); 
 	src1_resized.release();
 	mask.release();
 	background.release();
@@ -135,20 +120,33 @@ motion_detector::~motion_detector()
 void motion_detector::init()
 {
 	// init objects here
-	time_counter t; //create object T
-	back_sub = createBackgroundSubtractorMOG2(200, 90, true);
+	if (!back_sub_.empty())
+		back_sub_.release();
+
+	back_sub_ = createBackgroundSubtractorMOG2(200, 90, true);
+	background_frames_collected_ = 0;
+	t.reset_time();
 }
 
-void motion_detector::add_frame_(Mat* input_data)
+void motion_detector::add_frame(Mat* input_data)
 {
 	// process frame
 
 	// do stuffs with frame
-	k++;
 	auto& src1 = *input_data;
-	resize(src1, src1_resized, Size(src1.cols / coef, src1.rows / coef));
-	back_sub->apply(src1_resized, mask);
-	back_sub->getBackgroundImage(background);
+//	Mat src1_resized;
+	resize(src1, src1_resized, Size(frame_width / coef, frame_height / coef));
+	back_sub_->apply(src1_resized, mask);
+	back_sub_->getBackgroundImage(background);
+
+	void bh_draw_color_label();
+	if (background_frames_collected_ < 20)
+	{
+		background_frames_collected_++;
+		return;
+	}
+
+	refine_segments(src1_resized, mask, temp, t);
 
 	// if motion detected use callback to post results
 	auto rects = std::vector<RECT>();
