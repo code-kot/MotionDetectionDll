@@ -135,7 +135,6 @@ motion_detector::~motion_detector()
 void motion_detector::init()
 {
 		time_counter t; //create object T
-		
 		back_sub = createBackgroundSubtractorMOG2(200, 90, true);
 	   // init objects here
 }

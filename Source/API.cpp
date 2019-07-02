@@ -7,7 +7,6 @@ MOTION_DETECTION_API h_instance* create_motion_detector(callback* callback, cons
 {
 	// create new instance
 	auto md = new motion_detector(callback, frame_width,  frame_height/* settings ?? */);
-
 	// return handle
 	return md; //reinterpret_cast<h_instance*>(md);
 }
@@ -26,7 +25,6 @@ MOTION_DETECTION_API void process_frame(h_instance* instance, void* pixels, unsi
 MOTION_DETECTION_API void reset_motion_detector(h_instance* instance)
 {
 	auto md = reinterpret_cast<motion_detector*>(instance);
-
 	// reset state
 	md->reset();
 }
