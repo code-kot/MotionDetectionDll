@@ -1,6 +1,6 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "pch.h"
-
+//#include "stdafx.h"
 // add to preprocessor defines 
 #define MOTION_DETECTION_API_EXPORTS
 
