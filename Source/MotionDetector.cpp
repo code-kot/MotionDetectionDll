@@ -65,7 +65,7 @@ void motion_detector::refine_segments(const Mat& img, Mat& mask, Mat& dst, time_
 			}
 		}
 	}
-	catch (runtime_error& error)
+	catch (runtime_error&)
 	{
 	}
 	const Scalar color(255, 255, 255);
@@ -136,7 +136,6 @@ void motion_detector::init()
 {
 	// init objects here
 	time_counter t; //create object T
-
 	back_sub = createBackgroundSubtractorMOG2(200, 90, true);
 }
 

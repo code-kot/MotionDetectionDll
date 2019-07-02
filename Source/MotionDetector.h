@@ -29,7 +29,7 @@ public:
 	unsigned int frame_width_;
 	unsigned int frame_height_;
 
-	explicit motion_detector(callback* callback, unsigned int frame_width, unsigned int frame_height /* settings */);
+	explicit motion_detector(callback* callback, int frame_width, int frame_height /* settings */);
 	~motion_detector();
 
 	Mat view_mat; Mat temp; Mat mask, background, src1_resized;
