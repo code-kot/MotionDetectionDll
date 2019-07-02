@@ -1,5 +1,5 @@
-#include "pch.h"
 //#include "stdafx.h"
+#include "pch.h"
 #include "MotionDetector.h"
 
 // create instance and return pointer to instance

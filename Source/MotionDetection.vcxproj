@@ -115,7 +115,7 @@
       <SubSystem>NotSet</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>D:\github_projects\DLL_motion_01.07\Source\x64\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\github_projects\DLL_motion_01.07\Source\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>opencv_world410d.lib;opencv_world410.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -159,7 +159,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>D:\github_projects\DLL_motion_01.07\Source\x64\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\github_projects\DLL_motion_01.07\Source\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>opencv_world410d.lib;opencv_world410.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
