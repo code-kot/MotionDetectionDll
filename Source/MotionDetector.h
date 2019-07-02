@@ -13,10 +13,12 @@ using namespace cv;
 
 class motion_detector
 {
-	const string display_window = "Motion detector";
+private:
+	const string display_window_ = "Motion detector";
 
+	int background_frames_collected_ = 0;
 
-	Ptr<BackgroundSubtractor> back_sub;
+	Ptr<BackgroundSubtractor> back_sub_;
 
 	static void bh_draw_color_label(Mat& src, const string& title, const Scalar& color, const int pos, const int size = 20); //function create text in window with image
 
@@ -26,19 +28,25 @@ class motion_detector
 
 	callback* callback_;
 public:
-	unsigned int frame_width_;
-	unsigned int frame_height_;
+	int frame_width;
+	int frame_height;
 
 	explicit motion_detector(callback* callback, int frame_width, int frame_height /* settings */);
 	~motion_detector();
 
-	Mat view_mat; Mat temp; Mat mask, background, src1_resized;
+	Mat view_mat; 
+	Mat temp; 
+	Mat mask;
+	Mat background;
+	Mat src1_resized;
 	Mat* input_data;
 	vector<Mat> src1;
 
+	time_counter t; //create object T
+
 	void init();
 
-	void add_frame_(Mat* input_data);
+	void add_frame(Mat* input_data);
 
 	void reset();
 
