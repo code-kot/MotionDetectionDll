@@ -19,7 +19,7 @@ MOTION_DETECTION_API void process_frame(h_instance* instance, void* pixels, int 
 	// add new frame
 	md->add_frame(&src_new);
 	//auto& src1 = src_new;
-	callback(view_Mat);
+	
 }
 
 MOTION_DETECTION_API void reset_motion_detector(h_instance* instance)

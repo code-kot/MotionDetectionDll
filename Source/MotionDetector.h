@@ -22,7 +22,7 @@ private:
 
 	static void bh_draw_color_label(Mat& src, const string& title, const Scalar& color, const int pos, const int size = 20); //function create text in window with image
 
-	void refine_segments(const Mat& img, Mat& mask, Mat& dst, time_counter& t);	// function find contour from mask of image&find bounding rectangular from contour
+	vector<RECT>refine_segments(const Mat& img, Mat& mask, Mat& dst, time_counter& t);	// function find contour from mask of image&find bounding rectangular from contour
 
 	void show_images(Mat& img, Mat& mask);
 
@@ -46,7 +46,9 @@ public:
 
 	void init();
 
-	void add_frame(Mat* input_data);
+	vector<RECT> add_frame(Mat* input_data);
+
+	Mat& get_background();
 
 	void reset();
 
