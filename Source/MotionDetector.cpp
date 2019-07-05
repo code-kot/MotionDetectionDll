@@ -4,6 +4,7 @@
 #include "time_counter.h"
 #include "cv.h"
 #include <vector>
+#include <iostream>
 
 using namespace std;
 using namespace chrono;
@@ -25,9 +26,11 @@ void motion_detector::bh_draw_color_label(Mat& src, const string& title, const S
 	putText(src, title, Point(offset.x + line_size, position + 10), FONT_HERSHEY_COMPLEX, 0.4, Scalar(10, 95, 220));
 } //namespace fs = experimental::filesystem;
 
-vector<RECT> motion_detector::refine_segments(const Mat& img, Mat& mask, Mat& dst, time_counter& t)
+vector<recta>motion_detector::refine_segments(const Mat& img, Mat& mask, Mat& dst, time_counter& t)
 {
-	auto rects = std::vector<RECT>();
+	int32_t numb_contours; 
+	auto rects = vector<recta>();
+
 	const auto niters = 3;
 	vector<vector<Point>> contours;
 	//	vector<Rect> bound_rect(contours.size());
@@ -37,6 +40,8 @@ vector<RECT> motion_detector::refine_segments(const Mat& img, Mat& mask, Mat& ds
 	dilate(temp, temp, Mat(), Point(-1, -1), niters);
 	findContours(temp, contours, hierarchy, CONTOURS_MATCH_I3, CHAIN_APPROX_SIMPLE); //CHAIN_APPROX_TC89_KCOS
 	dst = Mat::zeros(img.size(), CV_8UC1);
+	numb_contours = contours.size();
+
 	if (contours.empty())
 		return rects;
 	// iterate through all the top-level contours,
@@ -72,23 +77,20 @@ vector<RECT> motion_detector::refine_segments(const Mat& img, Mat& mask, Mat& ds
 
 	cvtColor(img, view_mat, CV_8UC1);
 
+	recta rect1;
 	
-	RECT rect1;
-
 	for (const auto& contour : contours)
 	{
 		Rect roi = boundingRect(contour);
 		rectangle(view_mat, roi, Scalar(10, 0, 255));
-		
 		rect1.left = (roi.x)*coef; 	rect1.top = (roi.y) * coef;	rect1.right = (roi.width + roi.x)*coef;	rect1.bottom = (roi.height + roi.y)*coef;
 		rects.push_back(rect1);
 	//	auto cropped_image = view_mat(roi);
 	}
-	
-	bh_draw_color_label(view_mat, "Motion Detector", CV_8UC1, (1, 0));
+	return rects;
+	//bh_draw_color_label(view_mat, "Motion Detector", CV_8UC1, (1, 0));
 	//namedWindow(display_window_, WINDOW_AUTOSIZE);
 	//callback_(rectangle(view_mat(roi)));
-	
 }
 
 void motion_detector::show_images(Mat& img, Mat& mask)
@@ -107,9 +109,7 @@ motion_detector::motion_detector(callback* callback, const int frame_width, cons
 	callback_ = callback;
 	this->frame_width = frame_width;
 	this->frame_height = frame_height;
-
 	// create objects
-
 	// init
 	init(); // ?
 }
@@ -135,8 +135,9 @@ void motion_detector::init()
 	t.reset_time();
 }
 
-vector<RECT> motion_detector::add_frame(Mat* input_data)
+int32_t motion_detector::add_frame(Mat* input_data)
 {
+	find_rect.clear();
 	// process frame
 	// do stuffs with frame
 	auto& src1 = *input_data;
@@ -144,22 +145,27 @@ vector<RECT> motion_detector::add_frame(Mat* input_data)
 	resize(src1, src1_resized, Size(frame_width / coef, frame_height / coef));
 	back_sub_->apply(src1_resized, mask);
 	back_sub_->getBackgroundImage(background);
-
+	
 	void bh_draw_color_label();
-	if (background_frames_collected_ < 20)
+	if (background_frames_collected_ < 1)
 	{
 		background_frames_collected_++;
-		return vector<RECT>();
+		return 0;
 	}
-
-	return refine_segments(src1_resized, mask, temp, t);  //vector<RECT>();
-	
+	find_rect = refine_segments( src1_resized , mask,  temp,  t);
+	size_t j = find_rect.size();
+	return j; // vector<RECT>();
 	// if motion detected use callback to post results
-	
-	
 	//(callback_)(rects.size(), &rects[0], nullptr, 0); 
 //				numbs of rect, coord,  background void* pixels, 0 int bytes_per_line
 //process_frame(h_instance* instance, void* pixels, int bytes_per_line /* frame ?? */);
+}
+//template< typename FieldType >
+void motion_detector::rects_f(recta* get_rects, int32_t* rect_1)
+{
+	for (int32_t x = 0; x < j;  x++) {
+		get_rects[j]= find_rect[j];
+	}
 }
 
 Mat& motion_detector::get_background()

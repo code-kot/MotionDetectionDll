@@ -22,4 +22,6 @@ extern "C" {
 
 	/// delete detector
 	MOTION_DETECTION_API void delete_motion_detector(h_instance* instance);
+
+	MOTION_DETECTION_API void get_rect(h_instance* instance, void* pixels, int bytes_per_line /* frame ?? */);
 }

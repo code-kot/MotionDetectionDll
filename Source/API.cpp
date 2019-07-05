@@ -19,7 +19,12 @@ MOTION_DETECTION_API void process_frame(h_instance* instance, void* pixels, int 
 	// add new frame
 	md->add_frame(&src_new);
 	//auto& src1 = src_new;
-	
+}
+
+MOTION_DETECTION_API void get_rect(h_instance* instance, void* pixels, int bytes_per_line /* frame ?? */){
+	auto md = reinterpret_cast<motion_detector*>(instance);
+	auto src_new = Mat(md->frame_height, md->frame_width,CV_8UC3, pixels, bytes_per_line);
+	//md->rects_f;
 }
 
 MOTION_DETECTION_API void reset_motion_detector(h_instance* instance)
