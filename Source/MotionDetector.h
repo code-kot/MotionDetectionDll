@@ -22,31 +22,33 @@ private:
 
 	static void bh_draw_color_label(Mat& src, const string& title, const Scalar& color, const int pos, const int size = 20); //function create text in window with image
 
-	vector<RECT>refine_segments(const Mat& img, Mat& mask, Mat& dst, time_counter& t);	// function find contour from mask of image&find bounding rectangular from contour
+	void refine_segments(const Mat& img, Mat& mask, Mat& dst, time_counter& t);	// function find contour from mask of image&find bounding rectangular from contour
 
 	void show_images(Mat& img, Mat& mask);
 
-	callback* callback_;
+	vector<RECT> detected_rects_;
+
+	Mat view_mat_;
+	Mat temp_;
+	Mat mask_;
+	Mat background_;
+	Mat src1_resized_;
+
+	time_counter t_; //create object T
 public:
 	int frame_width;
 	int frame_height;
 
-	explicit motion_detector(callback* callback, int frame_width, int frame_height /* settings */);
+	explicit motion_detector(int frame_width, int frame_height);
 	~motion_detector();
-
-	Mat view_mat; 
-	Mat temp; 
-	Mat mask;
-	Mat background;
-	Mat src1_resized;
-	Mat* input_data;
-	vector<Mat> src1;
-
-	time_counter t; //create object T
 
 	void init();
 
-	vector<RECT> add_frame(Mat* input_data);
+	int add_frame(Mat* input_data);
+
+	void get_regions(RECT* rects, int rects_count);
+
+	void get_background_size(int width, int height, int bytes_per_pixel, int bytes_per_line);
 
 	Mat& get_background();
 
