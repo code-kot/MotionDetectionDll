@@ -11,7 +11,6 @@ using namespace std;
 using namespace chrono;
 using namespace cv;
 
-
 class motion_detector
 {
 private:
@@ -25,16 +24,15 @@ private:
 	static void bh_draw_color_label(Mat& src, const string& title, const Scalar& color, const int pos, const int size = 20); //function create text in window with image
 
 	vector<recta>refine_segments(const Mat& img, Mat& mask, Mat& dst, time_counter& t);	// function find contour from mask of image&find bounding rectangular from contour
-
+	
 	void show_images(Mat& img, Mat& mask);
 
-	callback* callback_;
 public:
 	
 	int frame_width;
 	int frame_height;
 	   	 
-	explicit motion_detector(callback* callback, int frame_width, int frame_height /* settings */);
+	explicit motion_detector( int frame_width, int frame_height /* settings */);
 	~motion_detector();
 		
 	RECT rect1;
@@ -49,13 +47,13 @@ public:
 	Mat* input_data;
 	vector<Mat> src1;
 	int32_t j;
-	time_counter t; //create object T
+	time_counter t; 
 	
 	void init();
 	
 	int32_t add_frame(Mat* input_data);
 
-	void rects_f(recta* get_rects, int32_t* rect_1);
+	int32_t rects_f(recta* get_rects, int32_t* number_of_rects);
 
 	Mat& get_background();
 

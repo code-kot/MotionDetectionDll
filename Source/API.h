@@ -6,10 +6,9 @@
 #else
 #define MOTION_DETECTION_API __declspec(dllimport)
 #endif
-
+#include <cstdint>
 
 typedef void h_instance;
-typedef void (__cdecl callback)(int rects_count, RECT* rects, void* background_pixels, int bytes_per_line);
 
 struct recta
 {
@@ -19,20 +18,16 @@ struct recta
 	int bottom;
 };
 
-
-
-extern "C" {
-	/// create and init instance
-	MOTION_DETECTION_API h_instance* create_motion_detector(callback* callback, int frame_width, int frame_height/* settings ?? */);
-
-	/// process next frame
-	MOTION_DETECTION_API void process_frame(h_instance* instance, void* pixels, int bytes_per_line /* frame ?? */);
-
-	/// reset detector
+extern "C" 
+{
+	// create and init instance
+	MOTION_DETECTION_API h_instance* create_motion_detector(int32_t frame_width, int32_t frame_height);
+	// process next frame
+	MOTION_DETECTION_API int32_t process_frame(h_instance* instance, void* pixels, int bytes_per_line );  
+	// get rectangles points of coordinates motion detector 
+	MOTION_DETECTION_API int32_t get_rect(h_instance* instance, recta* get_rects, int32_t* number_of_rects);
+	// reset motion detector
 	MOTION_DETECTION_API void reset_motion_detector( h_instance* instance);
-
-	/// delete detector
+	// delete motion detector
 	MOTION_DETECTION_API void delete_motion_detector(h_instance* instance);
-
-	MOTION_DETECTION_API void get_rect(h_instance* instance, void* pixels, int bytes_per_line /* frame ?? */);
 }
