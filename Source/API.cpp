@@ -21,10 +21,10 @@ MOTION_DETECTION_API void process_frame(h_instance* instance, void* pixels, int 
 	//auto& src1 = src_new;
 }
 
-MOTION_DETECTION_API void get_rect(h_instance* instance, void* pixels, int bytes_per_line /* frame ?? */){
+MOTION_DETECTION_API void get_rect(h_instance* instance, recta* get_rects, int32_t* rect_1 /* frame ?? */){
 	auto md = reinterpret_cast<motion_detector*>(instance);
-	auto src_new = Mat(md->frame_height, md->frame_width,CV_8UC3, pixels, bytes_per_line);
-	//md->rects_f;
+	//get rects
+	md->rects_f(get_rects, rect_1);
 }
 
 MOTION_DETECTION_API void reset_motion_detector(h_instance* instance)

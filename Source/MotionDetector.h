@@ -11,13 +11,6 @@ using namespace std;
 using namespace chrono;
 using namespace cv;
 
-struct recta
-{
-	int left;
-	int top;
-	int right;
-	int bottom;
-};
 
 class motion_detector
 {

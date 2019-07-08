@@ -7,8 +7,19 @@
 #define MOTION_DETECTION_API __declspec(dllimport)
 #endif
 
+
 typedef void h_instance;
 typedef void (__cdecl callback)(int rects_count, RECT* rects, void* background_pixels, int bytes_per_line);
+
+struct recta
+{
+	int left;
+	int top;
+	int right;
+	int bottom;
+};
+
+
 
 extern "C" {
 	/// create and init instance
