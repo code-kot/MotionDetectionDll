@@ -17,7 +17,7 @@ private:
 	
 	const string display_window_ = "Motion detector";
 
-	int background_frames_collected_ = 0;
+	int32_t background_frames_collected_ = 0;
 
 	Ptr<BackgroundSubtractor> back_sub_;
 
@@ -29,10 +29,10 @@ private:
 
 public:
 	
-	int frame_width;
-	int frame_height;
+	int32_t frame_width;
+	int32_t frame_height;
 	   	 
-	explicit motion_detector( int frame_width, int frame_height /* settings */);
+	explicit motion_detector( int32_t frame_width, int32_t frame_height /* settings */);
 	~motion_detector();
 		
 	RECT rect1;

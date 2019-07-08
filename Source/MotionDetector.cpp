@@ -16,7 +16,7 @@ void motion_detector::deinit()
 	background.release();
 }
 
-void motion_detector::bh_draw_color_label(Mat& src, const string& title, const Scalar& color, const int pos, const int size)
+void motion_detector::bh_draw_color_label(Mat& src, const string& title, const Scalar& color, const int32_t pos, const int32_t size)
 {
 	const auto line_size = 30; //30
 	const Point_<int> offset(10, 10);
@@ -96,7 +96,7 @@ void motion_detector::show_images(Mat& img, Mat& mask)
 	imshow(display_window, view_mat);
 }
 
-motion_detector::motion_detector( const int frame_width, const int frame_height )
+motion_detector::motion_detector( const int32_t frame_width, const int32_t frame_height )
 {	// create objects
 	this->frame_width = frame_width;
 	this->frame_height = frame_height;
@@ -149,8 +149,8 @@ int32_t motion_detector::rects_f(recta* get_rects, int32_t* number_of_rects)
 		for (auto x = 0; x < *number_of_rects; x++) {
 			get_rects[j] = find_rect[j];
 		}
-		return 0;
 	}
+	return 0;
 }
 
 Mat& motion_detector::get_background()

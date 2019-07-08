@@ -10,7 +10,7 @@ MOTION_DETECTION_API h_instance* create_motion_detector( int32_t frame_width, in
 }
 
 // add new frame
-MOTION_DETECTION_API int32_t process_frame(h_instance* instance, void* pixels, int bytes_per_line )
+MOTION_DETECTION_API int32_t process_frame(h_instance* instance, void* pixels, int32_t bytes_per_line )
 {
 	auto md = reinterpret_cast<motion_detector*>(instance);
 	auto src_new = Mat (md->frame_height, md->frame_width,CV_8UC3, pixels, bytes_per_line);
