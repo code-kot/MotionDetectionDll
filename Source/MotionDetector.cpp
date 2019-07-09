@@ -80,12 +80,12 @@ void motion_detector::refine_segments(const Mat& img, Mat& mask, Mat& dst, time_
 	for (const auto& contour : contours)
 	{
 		const auto roi = boundingRect(contour);
-		rectangle(view_mat_, roi, Scalar(10, 0, 255));
+//		rectangle(view_mat_, roi, Scalar(10, 0, 255));
 
 		rect1.left = (roi.x)*coef;
 		rect1.top = (roi.y)*coef;	
-		rect1.right = (roi.width + roi.x)*coef;	
-		rect1.bottom = (roi.height + roi.y)*coef;
+		rect1.right = (roi.width)*coef;	
+		rect1.bottom = (roi.height)*coef;
 		
 		detected_rects_.push_back(rect1);
 	}
