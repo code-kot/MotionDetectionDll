@@ -12,12 +12,12 @@
 
 typedef void h_instance;
 
-struct recta
+struct rectangle_struct
 {
 	int32_t left;
 	int32_t top;
-	int32_t right;
-	int32_t bottom;
+	int32_t width;
+	int32_t height;
 };
 
 extern "C"
@@ -29,7 +29,7 @@ extern "C"
 	MOTION_DETECTION_API int32_t process_frame(h_instance* instance, void* pixels, int32_t bytes_per_line);
 
 	// get motion regions
-	MOTION_DETECTION_API void get_motion_regions(h_instance* instance, recta* rects, int32_t rects_count);
+	MOTION_DETECTION_API void get_motion_regions(h_instance* instance, rectangle_struct* rects, int32_t rects_count);
 
 	// get background size 
 	MOTION_DETECTION_API void get_background_size(h_instance* instance, int32_t width, int32_t height, int32_t bytes_per_pixel, int32_t bytes_per_line);

@@ -70,23 +70,14 @@ void motion_detector::refine_segments(const Mat& img, Mat& mask, Mat& dst, time_
 	const Scalar color(255, 255, 255);
 	drawContours(dst, contours, largest_comp, color, LINE_AA, LINE_8, hierarchy);
 
-	Point2f vertices[4];
-
 	cvtColor(img, view_mat_, CV_8UC1);
-
-	recta rect1;
 
 	for (const auto& contour : contours)
 	{
 		const auto roi = boundingRect(contour);
 //		rectangle(view_mat_, roi, Scalar(10, 0, 255));
 
-		rect1.left = (roi.x)*coef;
-		rect1.top = (roi.y)*coef;	
-		rect1.right = (roi.width)*coef;	
-		rect1.bottom = (roi.height)*coef;
-
-		detected_rects_.push_back(rect1);
+		detected_rects_.push_back(rectangle_struct{ (roi.x) * coef, (roi.y) * coef, (roi.width) * coef, (roi.height) * coef});
 	}
 
 //	bh_draw_color_label(view_mat_, "Motion Detector", CV_8UC1, (1, 0));
@@ -158,7 +149,7 @@ int motion_detector::add_frame(Mat* input_data)
 	return detected_rects_.size();
 }
 
-void motion_detector::get_regions(recta* rects, const int rects_count)
+void motion_detector::get_regions(rectangle_struct* rects, const int rects_count)
 {
 	if (rects_count >= 0 && detected_rects_.size() == uint(rects_count))
 	{

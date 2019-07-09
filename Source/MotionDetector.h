@@ -27,7 +27,7 @@ private:
 
 	void show_images(Mat& img, Mat& mask);
 
-	vector<recta> detected_rects_;
+	vector<rectangle_struct> detected_rects_;
 
 	Mat view_mat_;
 	Mat temp_;
@@ -47,7 +47,7 @@ public:
 
 	int add_frame(Mat* input_data);
 
-	void get_regions(recta* rects, int rects_count);
+	void get_regions(rectangle_struct* rects, int rects_count);
 
 	void get_background_size(int width, int height, int bytes_per_pixel, int bytes_per_line);
 

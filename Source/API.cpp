@@ -22,7 +22,7 @@ MOTION_DETECTION_API int32_t process_frame(h_instance* instance, void* pixels, i
 	return md->add_frame(&src_new);
 }
 
-MOTION_DETECTION_API void get_motion_regions(h_instance* instance, recta* rects, int32_t rects_count)
+MOTION_DETECTION_API void get_motion_regions(h_instance* instance, rectangle_struct* rects, int32_t rects_count)
 {
 	auto md = reinterpret_cast<motion_detector*>(instance);
 
