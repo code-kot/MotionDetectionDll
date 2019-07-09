@@ -114,7 +114,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).h</PrecompiledHeaderOutputFile>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>NotSet</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>D:\opencv\build\x64\vc15\lib</AdditionalLibraryDirectories>
@@ -184,6 +184,9 @@
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="time_counter.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
