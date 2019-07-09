@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "MotionDetector.h"
-#include "Exceptions.h"
 #include "time_counter.h"
 #include "cv.h"
 #include <vector>
+#include <stdexcept>
 
 using namespace std;
 using namespace chrono;
@@ -11,9 +11,9 @@ using namespace cv;
 
 void motion_detector::deinit()
 {
-	src1_resized.release();
-	mask.release();
-	background.release();
+	src1_resized_.release();
+	mask_.release();
+	background_.release();
 }
 
 void motion_detector::bh_draw_color_label(Mat& src, const string& title, const Scalar& color, const int pos, const int size)
@@ -25,20 +25,21 @@ void motion_detector::bh_draw_color_label(Mat& src, const string& title, const S
 	putText(src, title, Point(offset.x + line_size, position + 10), FONT_HERSHEY_COMPLEX, 0.4, Scalar(10, 95, 220));
 } //namespace fs = experimental::filesystem;
 
-vector<RECT> motion_detector::refine_segments(const Mat& img, Mat& mask, Mat& dst, time_counter& t)
+void motion_detector::refine_segments(const Mat& img, Mat& mask, Mat& dst, time_counter& t)
 {
-	auto rects = std::vector<RECT>();
 	const auto niters = 3;
 	vector<vector<Point>> contours;
 	//	vector<Rect> bound_rect(contours.size());
 	vector<Vec4i> hierarchy;
-	dilate(mask, temp, Mat(), Point(-1, -1), niters);
-	erode(temp, temp, Mat(), Point(-1, -1), niters * 2);
-	dilate(temp, temp, Mat(), Point(-1, -1), niters);
-	findContours(temp, contours, hierarchy, CONTOURS_MATCH_I3, CHAIN_APPROX_SIMPLE); //CHAIN_APPROX_TC89_KCOS
+	dilate(mask, temp_, Mat(), Point(-1, -1), niters);
+	erode(temp_, temp_, Mat(), Point(-1, -1), niters * 2);
+	dilate(temp_, temp_, Mat(), Point(-1, -1), niters);
+	findContours(temp_, contours, hierarchy, CONTOURS_MATCH_I3, CHAIN_APPROX_SIMPLE); //CHAIN_APPROX_TC89_KCOS
+
 	dst = Mat::zeros(img.size(), CV_8UC1);
 	if (contours.empty())
-		return rects;
+		return;
+
 	// iterate through all the top-level contours,
 	// draw each connected component with its own random color
 	auto idx = 0, largest_comp = 0;
@@ -65,46 +66,46 @@ vector<RECT> motion_detector::refine_segments(const Mat& img, Mat& mask, Mat& ds
 	catch (runtime_error&)
 	{
 	}
+
 	const Scalar color(255, 255, 255);
 	drawContours(dst, contours, largest_comp, color, LINE_AA, LINE_8, hierarchy);
 
 	Point2f vertices[4];
 
-	cvtColor(img, view_mat, CV_8UC1);
+	cvtColor(img, view_mat_, CV_8UC1);
 
 	
 	RECT rect1;
 
 	for (const auto& contour : contours)
 	{
-		Rect roi = boundingRect(contour);
-		rectangle(view_mat, roi, Scalar(10, 0, 255));
+		const auto roi = boundingRect(contour);
+//		rectangle(view_mat_, roi, Scalar(10, 0, 255));
+
+		rect1.left = (roi.x)*coef;
+		rect1.top = (roi.y)*coef;	
+		rect1.right = (roi.width)*coef;	
+		rect1.bottom = (roi.height)*coef;
 		
-		rect1.left = (roi.x)*coef; 	rect1.top = (roi.y) * coef;	rect1.right = (roi.width + roi.x)*coef;	rect1.bottom = (roi.height + roi.y)*coef;
-		rects.push_back(rect1);
-	//	auto cropped_image = view_mat(roi);
+		detected_rects_.push_back(rect1);
 	}
 	
-	bh_draw_color_label(view_mat, "Motion Detector", CV_8UC1, (1, 0));
-	//namedWindow(display_window_, WINDOW_AUTOSIZE);
-	//callback_(rectangle(view_mat(roi)));
-	
+//	bh_draw_color_label(view_mat_, "Motion Detector", CV_8UC1, (1, 0));
 }
 
 void motion_detector::show_images(Mat& img, Mat& mask)
 {
 	imshow("Image", img);
 	imshow("Mask", mask);
-	imshow("temp", temp);
-	bh_draw_color_label(view_mat, "Motion Detector", CV_8UC1, (1, 0));
+	imshow("temp", temp_);
+	bh_draw_color_label(view_mat_, "Motion Detector", CV_8UC1, (1, 0));
 	const auto display_window = "Motion detector";
 	namedWindow(display_window, WINDOW_AUTOSIZE);
-	imshow(display_window, view_mat);
+	imshow(display_window, view_mat_);
 }
 
-motion_detector::motion_detector(callback* callback, const int frame_width, const int frame_height )
+motion_detector::motion_detector(const int frame_width, const int frame_height )
 {
-	callback_ = callback;
 	this->frame_width = frame_width;
 	this->frame_height = frame_height;
 
@@ -117,10 +118,14 @@ motion_detector::motion_detector(callback* callback, const int frame_width, cons
 motion_detector::~motion_detector()
 {
 	// delete used objects and free memory
-	back_sub_.release(); 
-	src1_resized.release();
-	mask.release();
-	background.release();
+	view_mat_.release();
+	temp_.release();
+	mask_.release();
+	background_.release();
+	src1_resized_.release();
+
+	back_sub_.release();
+
 	destroyAllWindows();
 }
 
@@ -132,46 +137,59 @@ void motion_detector::init()
 
 	back_sub_ = createBackgroundSubtractorMOG2(200, 90, true);
 	background_frames_collected_ = 0;
-	t.reset_time();
+	t_.reset_time();
 }
 
-vector<RECT> motion_detector::add_frame(Mat* input_data)
+int32_t motion_detector::add_frame(Mat* input_data)
 {
-	// process frame
-	// do stuffs with frame
-	auto& src1 = *input_data;
-//	Mat src1_resized;
-	resize(src1, src1_resized, Size(frame_width / coef, frame_height / coef));
-	back_sub_->apply(src1_resized, mask);
-	back_sub_->getBackgroundImage(background);
+	detected_rects_.clear();
+	
+	// process frame, do stuffs with frame
+//	auto& src1 = *input_data;
+
+	resize(*input_data, src1_resized_, Size(frame_width / coef, frame_height / coef));
+	back_sub_->apply(src1_resized_, mask_);
+	back_sub_->getBackgroundImage(background_);
 
 	void bh_draw_color_label();
 	if (background_frames_collected_ < 20)
 	{
 		background_frames_collected_++;
-		return vector<RECT>();
+		return 0;
 	}
 
-	return refine_segments(src1_resized, mask, temp, t);  //vector<RECT>();
-	
-	// if motion detected use callback to post results
-	
-	
-	//(callback_)(rects.size(), &rects[0], nullptr, 0); 
-//				numbs of rect, coord,  background void* pixels, 0 int bytes_per_line
-//process_frame(h_instance* instance, void* pixels, int bytes_per_line /* frame ?? */);
+	refine_segments(src1_resized_, mask_, temp_, t_);
+	return detected_rects_.size();
+}
+
+void motion_detector::get_regions(RECT* rects, const int rects_count)
+{
+	if (rects_count >= 0 && detected_rects_.size() == uint(rects_count))
+	{
+		for (auto i = 0; i < rects_count; i++)
+			rects[i] = detected_rects_[i];
+	}
+	else
+		throw std::invalid_argument("rects_count does not match detected rects count");
+}
+
+void motion_detector::get_background_size(int width, int height, int bytes_per_pixel, int bytes_per_line)
+{
+	width = background_.cols;
+	height = background_.rows;
+	bytes_per_pixel = background_.elemSize();
+	bytes_per_line = background_.step[0];
 }
 
 Mat& motion_detector::get_background()
 {
-	return background;
+	return background_;
 }
 
 void motion_detector::reset()
 {
-	src1.clear();
-	src1_resized.release();
-	mask.release();
-	background.release();
+	back_sub_.reset();
+	background_frames_collected_ = 0;
+
 	destroyAllWindows();
 }
