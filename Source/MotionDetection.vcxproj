@@ -170,7 +170,6 @@
   <ItemGroup>
     <ClInclude Include="API.h" />
     <ClInclude Include="cv.h" />
-    <ClInclude Include="Exceptions.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MotionDetector.h" />
     <ClInclude Include="pch.h" />
