@@ -35,7 +35,7 @@ public:
 	explicit motion_detector( int32_t frame_width, int32_t frame_height /* settings */);
 	~motion_detector();
 		
-	RECT rect1;
+	recta rect1;
 	int32_t numb_contours;
 	vector<recta>rects;
 	vector<recta>find_rect;
