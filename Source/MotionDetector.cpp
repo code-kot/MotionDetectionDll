@@ -29,14 +29,14 @@ void motion_detector::refine_segments(const Mat& img, Mat& mask, Mat& dst, time_
 {
 	const auto niters = 3;
 	vector<vector<Point>> contours;
-	//	vector<Rect> bound_rect(contours.size());
 	vector<Vec4i> hierarchy;
 	dilate(mask, temp_, Mat(), Point(-1, -1), niters);
 	erode(temp_, temp_, Mat(), Point(-1, -1), niters * 2);
 	dilate(temp_, temp_, Mat(), Point(-1, -1), niters);
-	findContours(temp_, contours, hierarchy, CONTOURS_MATCH_I3, CHAIN_APPROX_SIMPLE); //CHAIN_APPROX_TC89_KCOS
+	findContours(temp_, contours, hierarchy, CONTOURS_MATCH_I3, CHAIN_APPROX_SIMPLE);
 
 	dst = Mat::zeros(img.size(), CV_8UC1);
+
 	if (contours.empty())
 		return;
 
@@ -70,26 +70,16 @@ void motion_detector::refine_segments(const Mat& img, Mat& mask, Mat& dst, time_
 	const Scalar color(255, 255, 255);
 	drawContours(dst, contours, largest_comp, color, LINE_AA, LINE_8, hierarchy);
 
-	Point2f vertices[4];
-
 	cvtColor(img, view_mat_, CV_8UC1);
-
-	
-	RECT rect1;
 
 	for (const auto& contour : contours)
 	{
 		const auto roi = boundingRect(contour);
 //		rectangle(view_mat_, roi, Scalar(10, 0, 255));
 
-		rect1.left = (roi.x)*coef;
-		rect1.top = (roi.y)*coef;	
-		rect1.right = (roi.width)*coef;	
-		rect1.bottom = (roi.height)*coef;
-		
-		detected_rects_.push_back(rect1);
+		detected_rects_.push_back(rectangle_struct{ (roi.x) * coef, (roi.y) * coef, (roi.width) * coef, (roi.height) * coef});
 	}
-	
+
 //	bh_draw_color_label(view_mat_, "Motion Detector", CV_8UC1, (1, 0));
 }
 
@@ -112,7 +102,7 @@ motion_detector::motion_detector(const int frame_width, const int frame_height )
 	// create objects
 
 	// init
-	init(); // ?
+	init();
 }
 
 motion_detector::~motion_detector()
@@ -130,8 +120,7 @@ motion_detector::~motion_detector()
 }
 
 void motion_detector::init()
-{
-	// init objects here
+{	// init objects here
 	if (!back_sub_.empty())
 		back_sub_.release();
 
@@ -140,13 +129,11 @@ void motion_detector::init()
 	t_.reset_time();
 }
 
-int32_t motion_detector::add_frame(Mat* input_data)
+int motion_detector::add_frame(Mat* input_data)
 {
 	detected_rects_.clear();
-	
-	// process frame, do stuffs with frame
-//	auto& src1 = *input_data;
 
+	// process frame, do stuffs with frame
 	resize(*input_data, src1_resized_, Size(frame_width / coef, frame_height / coef));
 	back_sub_->apply(src1_resized_, mask_);
 	back_sub_->getBackgroundImage(background_);
@@ -162,7 +149,7 @@ int32_t motion_detector::add_frame(Mat* input_data)
 	return detected_rects_.size();
 }
 
-void motion_detector::get_regions(RECT* rects, const int rects_count)
+void motion_detector::get_regions(rectangle_struct* rects, const int rects_count)
 {
 	if (rects_count >= 0 && detected_rects_.size() == uint(rects_count))
 	{

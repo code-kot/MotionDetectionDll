@@ -2,7 +2,7 @@
 #include "MotionDetector.h"
 
 // create instance and return pointer to instance
-MOTION_DETECTION_API h_instance* create_motion_detector(const int32_t frame_width, const int32_t frame_height)
+MOTION_DETECTION_API h_instance* create_motion_detector(int32_t frame_width, const int32_t frame_height)
 {
 	// create new instance
 	const auto md = new motion_detector(frame_width,  frame_height);
@@ -11,7 +11,7 @@ MOTION_DETECTION_API h_instance* create_motion_detector(const int32_t frame_widt
 }
 
 // add new frame
-MOTION_DETECTION_API int32_t process_frame(h_instance* instance, void* pixels, const int32_t bytes_per_line)
+MOTION_DETECTION_API int32_t process_frame(h_instance* instance, void* pixels, int32_t bytes_per_line)
 {
 	auto md = reinterpret_cast<motion_detector*>(instance);
 
@@ -22,14 +22,14 @@ MOTION_DETECTION_API int32_t process_frame(h_instance* instance, void* pixels, c
 	return md->add_frame(&src_new);
 }
 
-MOTION_DETECTION_API void get_motion_regions(h_instance* instance, RECT* rects, const int32_t rects_count)
+MOTION_DETECTION_API void get_motion_regions(h_instance* instance, rectangle_struct* rects, int32_t rects_count)
 {
 	auto md = reinterpret_cast<motion_detector*>(instance);
 
-	return md->get_regions(rects, rects_count);
+	md->get_regions(rects, rects_count);
 }
 
-MOTION_DETECTION_API void get_background_size(h_instance* instance, const int32_t width, const int32_t height, const int32_t bytes_per_pixel, const int32_t bytes_per_line)
+MOTION_DETECTION_API void get_background_size(h_instance* instance, int32_t width, int32_t height, int32_t bytes_per_pixel, int32_t bytes_per_line)
 {
 	auto md = reinterpret_cast<motion_detector*>(instance);
 
@@ -62,7 +62,7 @@ MOTION_DETECTION_API void reset_motion_detector(h_instance* instance)
 MOTION_DETECTION_API void delete_motion_detector(h_instance* instance)
 {
 	const auto md = reinterpret_cast<motion_detector*>(instance);
-	md->~motion_detector();
+
 	// delete instance
 	delete md;
 }
