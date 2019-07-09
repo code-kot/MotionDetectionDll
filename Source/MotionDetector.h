@@ -14,7 +14,6 @@ using namespace cv;
 class motion_detector
 {
 private:
-	
 	const string display_window_ = "Motion detector";
 
 	int background_frames_collected_ = 0;
@@ -35,7 +34,7 @@ private:
 	Mat background_;
 	Mat src1_resized_;
 
-	time_counter t_; //create object T
+	time_counter t_;
 public:
 	int frame_width;
 	int frame_height;
