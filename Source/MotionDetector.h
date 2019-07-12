@@ -19,10 +19,10 @@ private:
 	int background_frames_collected_ = 0;
 
 	Ptr<BackgroundSubtractor> back_sub_;
+	
+	static void bh_draw_color_label(Mat& src, const string& title, const Scalar& color, const int64_t pos, const int64_t size = 20); //function create text in window with image
 
-	static void bh_draw_color_label(Mat& src, const string& title, const Scalar& color, const int pos, const int size = 20); //function create text in window with image
-
-	void refine_segments(const Mat& img, Mat& mask, Mat& dst, time_counter& t);	// function find contour from mask of image&find bounding rectangular from contour
+	vector<rectangle_struct>* refine_segments(const Mat& img, Mat& mask, Mat& dst, time_counter& t);	// function find contour from mask of image&find bounding rectangular from contour
 
 	void show_images(Mat& img, Mat& mask);
 
@@ -36,19 +36,15 @@ private:
 
 	time_counter t_;
 public:
-	int frame_width;
-	int frame_height;
-
-	explicit motion_detector(int frame_width, int frame_height);
+	
+	motion_detector();
 	~motion_detector();
 
 	void init();
 
-	int add_frame(Mat* input_data);
+	vector<rectangle_struct>* add_frame(Mat input_data);
 
-	void get_regions(rectangle_struct* rects, int rects_count);
-
-	void get_background_size(int width, int height, int bytes_per_pixel, int bytes_per_line);
+	void get_background_size(int64_t width, int64_t height, int64_t bytes_per_pixel, int64_t bytes_per_line);
 
 	Mat& get_background();
 
